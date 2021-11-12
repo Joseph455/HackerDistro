@@ -9,3 +9,4 @@ redis==3.5.3
 requests==2.26.0
 celery==5.1.2
 dj_database_url==0.5.0
+whitenoise==5.3.0
