@@ -30,4 +30,7 @@ Hacker Distro is a simple web app that consumes HackerNews api and displays the 
         `docker-compose run django  python manage.py migrate`
 
         `docker-compose up`
-    
+
+
+## Check Live Demo at:
+    https://hackerdistro.herokuapp.com/
