@@ -12,8 +12,19 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import dj_database_url
+import environ
 
 from celery.schedules import crontab
+
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+
+)
+
+# reading .env file
+environ.Env.read_env()
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,10 +35,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", True)
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -160,12 +171,12 @@ REST_FRAMEWORK = {
 
 
 # celery 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", 'redis://redis:6379/0')
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", 'redis://redis:6379/0')
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = os.environ.get("CELERY_TASK_SERIALIZER", 'json')
-CELERY_RESULT_SERIALIZER = os.environ.get("CELERY_RESULT_SERIALIZER", 'json')
-CELERY_TIMEZONE = os.environ.get("CELERY_TIMEZONE", 'Africa/Lagos') 
+CELERY_TASK_SERIALIZER = env("CELERY_TASK_SERIALIZER")
+CELERY_RESULT_SERIALIZER = env("CELERY_RESULT_SERIALIZER")
+CELERY_TIMEZONE = env("CELERY_TIMEZONE") 
 
 
 CELERY_BEAT_SCHEDULE = {
