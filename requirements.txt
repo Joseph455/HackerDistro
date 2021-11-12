@@ -11,3 +11,5 @@ celery==5.1.2
 dj_database_url==0.5.0
 whitenoise==5.3.0
 django_environ==0.8.1
+daphne==3.0.2
+
