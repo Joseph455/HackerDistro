@@ -1,0 +1,53 @@
+version: "3"
+
+services: 
+    django:
+        build: .
+        container_name: django
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes: 
+            - .:/usr/src/app
+        ports: 
+            - "8000:8000"
+        environment: 
+            - DEBUG=1
+            - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
+        depends_on: 
+            - redis
+        network_mode: bridge
+    celery:
+        build: .
+        command: python -m celery -A HackerDistro worker -l info
+        volumes:
+            - .:/usr/src/app
+        environment: 
+            - CELERY_BROKER=redis://redis:6379/00
+            - CELERY_RESULT_BACKEND=redis://redis:6379/0
+        links:
+            - redis    
+        depends_on: 
+            - django
+            - redis
+        network_mode: bridge
+    celery_worker_beat:
+        build: .
+        command: python -m celery -A HackerDistro beat -l info
+        volumes:
+            - .:/usr/src/app
+        environment: 
+            - CELERY_BROKER=redis://redis:6379/0
+            - CELERY_RESULT_BACKEND=redis://redis:6379/0
+        links:
+            - redis    
+        depends_on: 
+            - django
+            - redis
+            - celery
+        network_mode: bridge
+    redis:
+        image: "redis:alpine"
+        expose:
+            - 9000
+        ports:
+            - 9000:9000
+        network_mode: bridge

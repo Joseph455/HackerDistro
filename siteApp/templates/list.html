@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>
+      {% block title %}
+        Items List
+      {% endblock title %}
+    </title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/blog/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static   './src/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      
+      .btn-select {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        width: 5em !important;
+      }
+
+      .btn-select:hover {
+        font-size: 1.5rem;
+        font-weight: 900;
+        text-anchor: middle;
+        width: 4em !important;
+      }
+
+      .btn-select.selected {
+        font-size: 1.5rem;
+        font-weight: 900;
+        text-anchor: middle;
+        width: 4em !important;
+      }
+      .btn-select.selected:hover {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        width: 5em !important;
+      }
+
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    
+      .nav-option {
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+
+      .nav-option.active {
+          border-bottom: 0.3rem solid #343a40;
+      }
+
+      .nav-option:hover {
+        border-bottom: 0.3rem solid #343a40;
+      }
+
+    </style>
+    <!-- Custom styles for this template -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet"> -->
+    <!-- Custom styles for this template -->
+    <link href="{% static   './views/index/css/blog.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <header class="blog-header py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+          <div class="col-4 pt-1">
+            <button class="btn btn-lg btn-primary rounded-pill text-light" type="button" data-toggle="modal" data-target="#createItemModal" href="#">Create An Item</button>
+          </div>
+          <div class="col-4 text-center">
+            <a class="blog-header-logo text-dark" href="#">Hacker Distro</a>
+          </div>
+          <form id="search-form" class="col-4 d-flex justify-content-end align-items-center">
+            <span class="text-muted d-flex btn-group">
+              <input id="search-input" class="form-control rounded-pill w-100 dropdown-toggle" type="text">
+              <button class="" type="submit" style="border: none !important; background: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" style="height:2.5rem" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"></svg>
+              </button>
+            </span>
+          </form>
+        </div>
+      </header>
+
+      <div class="nav-scroller py-1 mb-2">
+        <nav class="nav d-flex justify-content-center">
+          {% block nav %}
+            <a class="p-2 mx-3 text-dark" href="{% url 'site-app:list-items' %}">Home</a>
+            <a class="p-2 text-muted mx-3" href="#">Details</a>
+            <a class="p-2 text-muted mx-3" href="#">About</a>
+            <a class="p-2 text-muted mx-3" href="#">Terms & Conditions</a>
+          {% endblock nav %}
+        </nav>
+      </div>
+
+      {% block filter-nav %}
+        <div class="">
+          <h2>Filter Items By</h2>
+          <nav class="d-flex nav-list my-3">
+            <a class="p-2 mx-3 text-dark border rounded-pill text-center btn btn-info btn-select {% if not filters  %} selected {% endif %}" href="?page={{page_obj.number}}">All</a>
+            {% for filter in filters %}
+              <a class="p-2 text-dark mx-3 border rounded-pill text-center btn btn-info btn-select {% if page_filter == filter %} selected {% endif %}" href="?filter={{filter}}&page={{page_obj.number}}">{{ filter }}</a>
+            {% endfor %}
+          </nav>
+        </div>
+      {% endblock filter-nav %}
+
+      {% if messages %}
+          <div class="my-2">
+            {% for msg in messages %}
+              {% if msg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="alert alert-success" alert-dismissible fade show" role="alert">
+                  {{ msg }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% elif msg.level == DEFAULT_MESSAGE_LEVELS.ERROR  %}
+                <div class="alert alert-danger" alert-dismissible fade show" role="alert">
+                  {{ msg }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% elif msg.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                <div class="alert alert-info" alert-dismissible fade show" role="alert">
+                  {{ msg }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+             {% endif %}
+            {% endfor %}
+          </div>
+      {% endif %}
+
+      {% block details %}
+        <div class="row mb-2" >
+          {% if not page_obj %}
+            <div class="col-12 text-center " style="font-size: 2.5rem;">
+              We don't have any items to display at the moments 
+            </div>
+          {% endif %}
+
+          {% for item in page_obj %}
+            <div class="col-md-4 col-sm-6" id="{{item.id}}" url="{{item.get_absolute_url}}" onclick="gotToDetailOnClick(this)" src="{% url 'site-app:retreive_items' item.id %}">
+              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative" style="min-height: 13rem; max-height: 13rem;">
+                <div class="col p-4 d-flex flex-column position-static">
+                  <h4 class="d-inline-block mb-2 text-primary text-right"><span class="badge badge-secondary">{{ item.type }}</span></h4>
+                  <div class="text-dark p-1">
+                    {{ item.get_model_type.title|truncatechars:60 }}
+                  </div>
+                  <div class="d-flex flex-row justify-content-between mb-1 ">
+                    <div class="text-muted">
+                      status: 
+                      {% if item.dead %}
+                        <span class="text-danger">Inactive</span>
+                      {% else %}
+                        <span class="text-success">Active</span>
+                      {% endif %}
+                    </div>
+                    <div class="text-muted">
+                      {{ item.get_kids|length }}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply-fill" viewBox="0 0 16 16">
+                        <path d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
+                      </svg> 
+                      <div class="text-muted">
+                        {% if item.score %}{{ item.score }}{% else %} 0 {% endif %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                          <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-1 text-muted d-flex flex-row justify-content-between">
+                    <span>{{ item.time }}</span>
+                    <small class="text-muted text-right">@{{ item.by.source_id }} </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endblock details %}
+      
+
+      {% block pagination %}
+        {% if page_obj %}
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page=1&filter={{page_filter}}">&laquo; first</a></li>
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&filter={{page_filter}}">previous</a></li>
+              {% endif %}
+
+              <li class="page-item page-link">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </li>
+
+              {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&filter={{page_filter}}">next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&filter={{page_filter}}">last &raquo;</a></li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+      {% endblock pagination %}
+
+      
+      <footer class="blog-footer">
+        <p>Blog template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+        <p>
+          <a href="#">Back to top</a>
+        </p>
+      </footer>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="createItemModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create Hacker Item</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid p-4">
+              <div class="row d-flex flex-auto-row justify-content-between" style="height: 3rem;">
+                <span id="story-option" class="flex-fill active px-2 text-center nav-text text-lg nav-option" option="story" onclick="choose_modal(this)">
+                  Story
+                </span>
+                <span class="border-right"></span>
+                <span id="job-option" class="flex-fill px-2 text-center nav-text text-lg nav-option" option="job" onclick="choose_modal(this)">
+                  Job
+                </span>
+                <span class="border-right"></span>
+                <span id="poll-option" class="flex-fill px-2 text-center nav-text text-lg nav-option" option="poll" onclick="choose_modal(this)">
+                  Polls
+                </span>
+              </div>
+
+              <div id="create-item-form" class="d-flex flex-column mt-4">
+                <div class="create-form" id="create-story-form" ons>
+                  <h3 class="text-center">Create Story</h3>
+                  <form action="{% url 'site-app:create_story' %}" method="POST">
+                    <input name="type" required="" id="id_type" hidden value="story">
+                    <div class="form-group">
+                      <label for="id_url">Url:</label>
+                      <input class="form-control" type="url" name="url" maxlength="200" required="" id="id_url">
+                    </div>
+                    <div class="form-group">
+                      <label for="id_title">Title:</label>
+                      <input class="form-control" type="text" name="title" maxlength="200" required="" id="id_title">
+                    </div>
+                    {% csrf_token %}
+                    <button class="btn btn-primary my-2" type="submit">Create</button>                  
+                  </form>
+                </div>              
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- create-story-form data -->
+    <div class="d-none create-form" id="create-story-form" ons>
+      <h3 class="text-center">Create Story</h3>
+      <form action="{% url 'site-app:create_story' %}" method="POST">
+        <input name="type" required="" id="id_type" hidden value="story">
+        <div class="form-group">
+          <label for="id_url">Url:</label>
+          <input class="form-control" type="url" name="url" maxlength="200" required="" id="id_url">
+        </div>
+        <div class="form-group">
+          <label for="id_title">Title:</label>
+          <input class="form-control" type="text" name="title" maxlength="200" required="" id="id_title">
+        </div>
+        {% csrf_token %}
+        <button class="btn btn-primary my-2" type="submit">Create</button>                  
+      </form>
+    </div>
+
+    <!-- create-job-form data -->
+    <div class="d-none text-center create-form" id="create-job-form" >
+      <h3 class="text-center">Create Job Opening</h3>
+      <form action="{% url 'site-app:create_job' %}" method="POST">
+        {% csrf_token %}
+        <input name="type" required="" id="id_type" hidden value="job">
+        <label for="id_text">Text:</label><textarea name="text" cols="40" rows="10" required="" id="id_text" class="form-control"></textarea>
+        <label for="id_title">Title:</label><input type="text" name="title" maxlength="200" required="" id="id_title" class="form-control">
+        <label for="id_url">Url:</label><input type="url" name="url" maxlength="200" required="" id="id_url" class="form-control">
+        <button class="btn btn-primary my-2" type="submit">Create</button>
+      </form>
+    </div>
+
+    <!-- create-poll-form data -->
+    <div class="d-none text-center create-form" id="create-poll-form">
+      <h3 class="text-center">Create a Poll</h3>
+      <form action="{% url 'site-app:create_poll' %}" method="POST">
+        {% csrf_token %}
+        <input name="type" required="" id="id_type" value="poll" hidden>
+        <label for="id_text">Text:</label><textarea name="text" cols="40" rows="10" id="id_text" class="form-control"></textarea>
+        <label for="id_title">Title:</label><input type="text" name="title" maxlength="200" required="" id="id_title" class="form-control">
+        <button class="btn btn-primary my-2" type="submit">Create</button>                  
+      </form>
+    </div>
+    
+
+    {% block modals %}
+    {% endblock modals %}
+
+    <script src="{% static   './src/jquery/jquery.js' %}"></script>
+    <script src="{% static   './src/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static   './src/bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static   './src/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    
+    <script>
+      
+        const form = document.querySelector("#search-form");
+        
+        form.addEventListener("submit", function(event){
+          event.preventDefault();
+          search();
+        }, true);
+
+        function gotToDetailOnClick(ele)
+        {
+          const url = ele.getAttribute("url");
+          window.location.href = url; 
+        }
+
+        function choose_modal(ele)
+        {
+          const forms = document.querySelectorAll(".create-form");
+          const container = document.querySelector("#create-item-form");
+          let option = ele.getAttribute("option");
+          let chosen;
+          
+          document.querySelectorAll(".nav-option").forEach(opt => {
+            opt.classList.remove("active");
+          });
+          
+          container.classList.add("active");
+
+          forms.forEach(mod => {
+            
+            if (mod.id.indexOf(option) > -1)
+            {
+              chosen = mod.cloneNode(true);
+              chosen.setAttribute('id',`${option}-selected`)
+              chosen.classList.remove("d-none");
+              container.innerHTML = chosen.innerHTML;
+              console.log(option);
+              console.log(mod.id);
+            }
+
+          })
+
+
+        }
+
+        function search()
+        {
+          const data = document.querySelector("#search-input").value;
+
+          let url = (window.location.search) ? `${window.location.search}&search=${data}`: `?search=${data}`;
+          
+          if (window.location.search && (window.location.search.indexOf("search")>-1))
+          {
+              let query = window.location.search.split("&");
+              
+              query.forEach(str => {
+                if (str.indexOf("search")>-1)
+                {
+                  query[query.indexOf(str)] = `search=${data}`
+                }
+              });              
+            url = query.join("&");
+          }
+          window.location.search = url;
+        }
+  
+    </script>
+    {% block js  %}
+    {% endblock js %}
+  </body>
+</html>
