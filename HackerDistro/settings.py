@@ -87,7 +87,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'HackerDistro.wsgi.application'
+# WSGI_APPLICATION = 'HackerDistro.wsgi.application'
+ASGI_APPLICATION = 'HackerDistro.asgi.application'
 
 
 # Database

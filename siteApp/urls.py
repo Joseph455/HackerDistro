@@ -14,14 +14,14 @@ from .views import (
 app_name="site-app"
 
 urlpatterns = [
-    path("items/", list_view, name="list-items"),
+    path("", list_view, name="list-items"),
     path("items/<int:id>/", retreive_view, name="retreive_items"),
     path("comments/<int:id>/", comment_view, name="comment_detail"),
-    path("items/jobs/", create_job_view, name="create_job"),
-    path("items/stories/", create_story_view, name="create_story"),
-    path("items/polls/", create_poll_view, name="create_poll"),
-    path("items/polls/<int:poll_id>/options/", create_polloption_view, name="create_pollopt"),
-    path("items/<int:item_id>/comments/", create_comment_view, name="create-comment"),
+    path("jobs/", create_job_view, name="create_job"),
+    path("stories/", create_story_view, name="create_story"),
+    path("polls/", create_poll_view, name="create_poll"),
+    path("polls/<int:poll_id>/options/", create_polloption_view, name="create_pollopt"),
+    path("<int:item_id>/comments/", create_comment_view, name="create-comment"),
 ]
 
 
