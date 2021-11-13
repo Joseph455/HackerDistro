@@ -25,7 +25,7 @@ It also exposes a simple REST api to perform crud Operations
 
 ## **Runing Project Locally**
     In your terminal change directory to the project's root folder the run: 
-        `docker-compose build`
+        `docker-compose build django`
     
         `docker-compose run django  python manage.py makemigrations`
         `docker-compose run django  python manage.py migrate`
@@ -35,6 +35,7 @@ It also exposes a simple REST api to perform crud Operations
 
 ## Check Live Demo at:
     https://hackerdistro.herokuapp.com/
-##API :
-    https://hackerdistro.herokuapp.com/swagger/
-    https://hackerdistro.herokuapp.com/redoc/
+    
+    API :
+        https://hackerdistro.herokuapp.com/swagger/
+        https://hackerdistro.herokuapp.com/redoc/
