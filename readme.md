@@ -10,7 +10,8 @@
 
 ## **Project Description**
 
-Hacker Distro is a simple web app that consumes HackerNews api and displays the data to user on its frontend 
+Hacker Distro is a simple web app that consumes HackerNews api and displays the data to users on its frontend 
+It also exposes a simple REST api to perform crud Operations
 
 ---
 
@@ -34,3 +35,6 @@ Hacker Distro is a simple web app that consumes HackerNews api and displays the 
 
 ## Check Live Demo at:
     https://hackerdistro.herokuapp.com/
+##API :
+    https://hackerdistro.herokuapp.com/swagger/
+    https://hackerdistro.herokuapp.com/redoc/
