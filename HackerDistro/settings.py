@@ -42,6 +42,7 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = [
     "hackerdistro.herokuapp.com",
+    "127.0.0.1",
 ]
 
 # Application definition

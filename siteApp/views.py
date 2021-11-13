@@ -4,6 +4,7 @@ import asyncio
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
@@ -17,7 +18,8 @@ from .forms import (
     PollOptionForm, 
     StoryForm, 
     UserLoginForm, 
-    UserSubscriptionForm
+    UserSubscriptionForm,
+    ResetPasswordForm
 )
 
 from .models import BaseModel, CommentModel, UserModel, PollOptionModel
@@ -274,8 +276,30 @@ def user_logout(request, *args, **kwargs):
 @require_POST
 @login_required
 def reset_password(request, *args, **kwargs):
-    pass
+    form = ResetPasswordForm(request.POST)
+    user = request.user
+
+    if form.is_valid(request):
+        pwd = form.cleaned_data.get('new_password')
+        user.set_password(pwd)
+        user.save()
+        logout(request)
+        login(request, user)
+
+        return redirect(
+            reverse('site-app:profile_view', {"id": user.id})
+        )
+    
+    messages.error(request, form.errors)
+    
+    return redirect(reverse('site-app:profile_view', {"id": user.id}))
 
 
-def user_profile(request, *args, **kwargs):
-    pass
+@require_GET
+def user_profile(request, id, **kwargs):
+    user = User.objects.get(id=id)
+    hacker = UserModel.objects.get(user=user)
+    return render(request, "profile.html", {
+        'user': user,
+        'hacker': hacker,
+    })

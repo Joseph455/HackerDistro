@@ -58,12 +58,7 @@ class PollOptionForm(BaseForm):
 
 
 class UserSubscriptionForm(forms.ModelForm):
-    password = forms.PasswordInput(
-        write_only=True, 
-        required=True, 
-        min_length=7,
-        max_length=50
-    )
+    password = forms.PasswordInput()
 
     class Meta:
         model = User
@@ -71,16 +66,28 @@ class UserSubscriptionForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.ModelForm): 
-    password = forms.PasswordInput(
-        write_only=True, 
-        required=True, 
-        min_length=7,
-        max_length=50
-    )
+    password = forms.PasswordInput()
 
     class Meta:
         model = User
         fields = ['email', 'password']
 
+
+class ResetPasswordForm(forms.Form): 
+    old_password = forms.PasswordInput()
+
+    new_password =  forms.PasswordInput()
+
+    def is_valid(self, request) -> bool:
+        valid = super(ResetPasswordForm, self).is_valid()
+        user = request.user
+        
+        if user:
+            valid = user.check_password(
+                self.initial.get('old_password')
+            )
+        else:
+            valid = False
+        return valid
 
 
