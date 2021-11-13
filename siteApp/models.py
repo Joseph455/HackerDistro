@@ -8,7 +8,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
-
+from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
@@ -218,6 +218,7 @@ class PollOptionModel(BaseModel):
 
 
 class UserModel(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     source_id =  models.CharField(null=False, max_length=200, unique=True)
     delay = models.IntegerField(default=0)
     created = models.DateTimeField(default=timezone.now)

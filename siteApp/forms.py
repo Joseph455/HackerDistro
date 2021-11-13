@@ -1,3 +1,5 @@
+from django import forms
+from django.contrib.auth.models import User
 from siteApp.models import BaseModel, CommentModel, JobModel, PollModel, PollOptionModel, StoryModel, UserModel
 from django.forms import ModelForm
 
@@ -53,5 +55,32 @@ class PollOptionForm(BaseForm):
     class Meta(BaseForm.Meta):
         model = PollOptionModel
         fields = BaseForm.Meta.fields + ["title"]
+
+
+class UserSubscriptionForm(forms.ModelForm):
+    password = forms.PasswordInput(
+        write_only=True, 
+        required=True, 
+        min_length=7,
+        max_length=50
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+
+class UserLoginForm(forms.ModelForm): 
+    password = forms.PasswordInput(
+        write_only=True, 
+        required=True, 
+        min_length=7,
+        max_length=50
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'password']
+
 
 
